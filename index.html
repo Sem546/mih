@@ -1,180 +1,377 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Лиза — Таролог</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500&display=swap');
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Лиза — Таролог (Cat Tarot)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-dark: #08040a;
+    --panel: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.04);
+    --muted: #d9d2e6;
+    --accent: #b886ff;
+    --accent-2: #f5cfa9;
+    --card: #0f0b12;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg-dark);color:var(--muted);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
 
-    :root {
-      --accent: #a26bce;
-      --dark: #1a0f23;
-      --light: #f9f5ff;
-    }
+  /* Page layout */
+  .wrap{max-width:1100px;margin:0 auto;padding:28px}
+  header{position:relative;margin-bottom:26px}
+  /* Background: variant C — candles + gradient overlay */
+  .hero{
+    position:relative;
+    border-radius:16px;
+    overflow:hidden;
+    min-height:56vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:44px 22px;
+    background:
+      linear-gradient(180deg, rgba(10,6,12,0.55), rgba(7,3,9,0.75)),
+      radial-gradient(1200px 400px at 10% 85%, rgba(200,160,110,0.06), transparent 15%),
+      radial-gradient(900px 350px at 50% 85%, rgba(200,160,110,0.05), transparent 15%),
+      radial-gradient(1200px 400px at 90% 85%, rgba(200,160,110,0.04), transparent 15%);
+    box-shadow:0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    background-blend-mode: overlay;
+  }
+  /* optional soft candle image (kept behind overlay) */
+  .hero::before{
+    content:"";
+    position:absolute;inset:0;
+    background-image: url('1616de98-9481-4eb6-a8cb-2ef5dbdfc2cc.png');
+    background-size: cover;background-position:center;
+    opacity:0.22;filter:blur(2px) saturate(0.75);
+    z-index:0;
+  }
 
-    body {
-      margin: 0;
-      font-family: "Inter", sans-serif;
-      color: var(--light);
-      background: radial-gradient(circle at 20% 20%, #2b183a, #12091a 80%);
-      overflow-x: hidden;
-    }
+  .hero-inner{position:relative;z-index:2;max-width:920px}
+  .brand{font-family:Cormorant, serif;color:#fff;font-size:44px;margin:0 0 6px;text-shadow:0 10px 28px rgba(184,134,255,0.12)}
+  .subtitle{color:var(--muted);margin-bottom:18px;font-size:16px}
+  .hero-text{color:#efe9ff;max-width:760px;margin:0 auto 20px;font-size:18px;line-height:1.6}
 
-    /* 🔥 Анимация свечей */
-    .candles {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: url('https://i.imgur.com/fvL1FGO.gif') center/cover no-repeat;
-      opacity: 0.22;
-      z-index: -1;
-    }
+  .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;background:linear-gradient(90deg,var(--accent),#7741d9);color:#fff;padding:12px 20px;border-radius:28px;font-weight:600;border:0;cursor:pointer;box-shadow:0 8px 30px rgba(139,90,255,0.16)
+  }
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .btn.small{padding:8px 12px;border-radius:18px;font-size:14px}
 
-    header {
-      text-align: center;
-      padding: 80px 20px 40px;
-      animation: fadeIn 2s ease-in;
-    }
+  /* subtle flames & smoke built with CSS/SVG overlays */
+  .flames{position:absolute;left:0;right:0;bottom:0;height:160px;pointer-events:none;z-index:1}
+  .flame{position:absolute;bottom:18px;width:12px;height:32px;border-radius:50%;filter: blur(8px);transform-origin:center bottom;background: radial-gradient(circle at 50% 25%, rgba(255,230,180,0.98), rgba(255,150,50,0.6) 50%, rgba(255,50,0,0.05) 70%, transparent 100%);opacity:0.9;animation: floatUp 3.6s ease-in-out infinite}
+  .flame.f1{left:10%;animation-delay:0s;height:30px}
+  .flame.f2{left:26%;animation-delay:0.6s;height:36px}
+  .flame.f3{left:48%;animation-delay:1.2s;height:28px}
+  .flame.f4{left:70%;animation-delay:1.8s;height:40px}
+  .flame.f5{left:88%;animation-delay:2.4s;height:32px}
+  @keyframes floatUp{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-22px) scale(1.15)}100%{transform:translateY(0) scale(1)}}
 
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 42px;
-      margin-bottom: 10px;
-      color: #f2e3ff;
-      text-shadow: 0 0 12px rgba(163, 108, 255, 0.6);
-    }
+  .smoke{position:absolute;left:0;right:0;bottom:110px;height:220px;pointer-events:none;z-index:1}
+  .smoke svg{width:100%;height:100%;opacity:0.12;mix-blend-mode:screen;filter:blur(2px)}
 
-    header p {
-      font-size: 18px;
-      color: #d8c8ef;
-    }
+  /* main content */
+  main{padding:18px}
+  .card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 6px 24px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.03)}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:26px;align-items:start}
+  h2.section{font-family:Cormorant, serif;font-size:24px;color:#f7eaff;margin:0 0 10px}
+  p.lead{color:var(--muted);line-height:1.7;margin:0 0 8px}
 
-    section {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 20px 30px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      margin-bottom: 40px;
-      animation: slideUp 1.5s ease;
-    }
+  /* why-list */
+  .why-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .why-item{background:var(--glass);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);position:relative;overflow:visible}
+  .why-item h4{margin:0 0 6px;color:#fff;font-family:Cormorant, serif}
+  .why-item p{margin:0;color:var(--muted);line-height:1.6;font-size:15px}
 
-    h2 {
-      color: #e6d5ff;
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      margin-top: 0;
-    }
+  /* small decorative cat SVG inside items (absolute) */
+  .cat-small{position:absolute;width:76px;height:76px;right:10px;bottom:-18px;transform:translateY(0);opacity:0.98;pointer-events:none}
 
-    p, li {
-      color: #e8def7;
-      line-height: 1.6;
-      font-size: 16px;
-    }
+  /* gallery */
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .gallery img{width:100%;height:140px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
 
-    ul {
-      padding-left: 20px;
-    }
+  /* price right column */
+  aside .price-list{display:flex;flex-direction:column;gap:12px}
+  .price-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);text-align:center}
+  .price-card h4{margin:0;color:#fff;font-family:Cormorant, serif}
+  .price-big{font-size:26px;color:var(--accent);margin-top:8px;font-weight:700}
+  .price-card p{color:var(--muted);font-size:14px;margin:8px 0 0}
 
-    .button {
-      display: inline-block;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-weight: 500;
-      font-size: 18px;
-      margin-top: 25px;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 12px rgba(162, 107, 206, 0.6);
-    }
+  /* footer */
+  footer{padding:28px;text-align:center;color:var(--muted);font-size:14px}
 
-    .button:hover {
-      background: #c29bff;
-      box-shadow: 0 0 20px rgba(194, 155, 255, 0.9);
-      transform: translateY(-3px);
-    }
+  /* cat decorations pinned to page */
+  .cat-deco{position:absolute;width:140px;height:140px;pointer-events:none;z-index:3;opacity:0.95}
+  .cat-deco.small{width:96px;height:96px}
+  .cat-deco.left-top{left:8%;top:12%}
+  .cat-deco.right-mid{right:6%;top:42%}
+  .cat-deco.left-mid{left:2%;top:52%}
+  .cat-deco.right-bottom{right:4%;bottom:14%}
 
-    footer {
-      text-align: center;
-      font-size: 14px;
-      padding: 30px 10px;
-      color: #c8b7e6;
-    }
+  /* playful floating */
+  .floaty{animation: floaty 6s ease-in-out infinite}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
 
-    .socials a {
-      color: #cdafff;
-      margin: 0 10px;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
+  /* responsive */
+  @media (max-width:980px){
+    .grid{grid-template-columns:1fr}
+    .gallery{grid-template-columns:repeat(2,1fr)}
+    .cat-deco{display:none}
+  }
+  @media (max-width:520px){
+    .brand{font-size:28px}
+    .hero{min-height:46vh;padding:28px 12px}
+    .gallery img{height:110px}
+  }
 
-    .socials a:hover {
-      color: #fff;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  /* accessible focus */
+  .btn:focus{outline:3px solid rgba(184,134,255,0.22);outline-offset:3px}
+</style>
 </head>
 <body>
 
-  <div class="candles"></div>
+  <div class="hero" role="img" aria-label="Фон со свечами и мистической атмосферой">
+    <div class="hero-inner wrap">
+      <div class="brand">Лиза — Таролог</div>
+      <div class="subtitle">Психология • Интуиция • Энергия карт</div>
+      <p class="hero-text">Я помогаю найти ответы в сферах любви, работы и финансов. Мои расклады — живые, глубокие и всегда индивидуальны.</p>
 
-  <header>
-    <h1>Лиза — Таролог</h1>
-    <p>Помогаю найти ответы через карты Таро 💫</p>
-  </header>
+      <div class="actions">
+        <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener noreferrer">Записаться в личку</a>
+        <a class="btn secondary" href="#about">Обо мне</a>
+        <button class="btn small" id="playSoundBtn" title="Включить фоновую музыку">▶︎ Play Ambient</button>
+      </div>
+    </div>
 
-  <section>
-    <h2>Обо мне</h2>
-    <p>Меня зовут Лиза — я таролог. Я помогаю людям найти ответы в сферах любви, работы и финансов.</p>
-    <p>Мои расклады — это не просто гадание, а реальный способ понять, что мешает, куда двигаться и где твои возможности.</p>
-  </section>
+    <div class="flames" aria-hidden="true">
+      <div class="flame f1 floaty"></div>
+      <div class="flame f2 floaty"></div>
+      <div class="flame f3 floaty"></div>
+      <div class="flame f4 floaty"></div>
+      <div class="flame f5 floaty"></div>
+    </div>
 
-  <section>
-    <h2>💞 В сфере любви</h2>
-    <p>Помогаю разобраться в чувствах — твоих и другого человека. Карты покажут, есть ли будущее у отношений, стоит ли писать, ждать или отпустить. Они открывают, кто честен, а кто играет.</p>
+    <div class="smoke" aria-hidden="true">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid slice">
+        <path d="M0 160 C200 120 400 200 600 160 C800 120 1000 200 1200 160" stroke="#fff" stroke-width="1.2" fill="none" opacity="0.18"/>
+        <path d="M0 140 C220 100 420 180 620 140 C820 100 1020 180 1200 140" stroke="#fff" stroke-width="0.8" fill="none" opacity="0.12"/>
+      </svg>
+    </div>
+  </div>
 
-    <h2>💼 В сфере работы</h2>
-    <p>Подсказываю, в каком направлении двигаться, стоит ли менять работу или начать что-то своё. Показываю, где твой потенциал и как раскрыть себя полностью.</p>
+  <!-- decorative cat SVGs placed across page -->
+  <!-- Cat SVG defined once and reused via <use> inlined via symbol for accessibility -->
+  <svg style="display:none;">
+    <symbol id="cat-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid">
+      <!-- simple stylized cute cat (2D) -->
+      <g transform="translate(0,0)">
+        <ellipse cx="100" cy="130" rx="62" ry="34" fill="#1a1420" />
+        <circle cx="100" cy="72" r="44" fill="#2a222b"/>
+        <path d="M72 50 C68 40 80 30 100 30 C120 30 132 40 128 50" fill="#2a222b"/>
+        <path d="M74 50 C74 78 126 78 126 50" fill="#1f1820"/>
+        <ellipse cx="85" cy="72" rx="6" ry="8" fill="#fff8"/>
+        <ellipse cx="115" cy="72" rx="6" ry="8" fill="#fff8"/>
+        <circle cx="83" cy="72" r="2.3" fill="#000"/>
+        <circle cx="113" cy="72" r="2.3" fill="#000"/>
+        <path d="M98 80 Q100 84 102 80" stroke="#ffb6b6" stroke-width="2" fill="transparent" stroke-linecap="round"/>
+        <!-- ear left -->
+        <path d="M70 35 L86 58 L66 54 Z" fill="#2a222b"/>
+        <!-- ear right -->
+        <path d="M134 35 L118 58 L138 54 Z" fill="#2a222b"/>
+        <!-- tail -->
+        <path d="M150 120 C170 110 178 90 160 80" stroke="#2a222b" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <!-- small card under paw -->
+        <rect x="110" y="140" width="44" height="28" rx="4" fill="#f6e9d6" transform="rotate(-12 132 154)"/>
+      </g>
+    </symbol>
+  </svg>
 
-    <h2>💰 В сфере финансов</h2>
-    <p>Расклады помогают понять, как стабилизировать доход, где есть рост и что мешает деньгам приходить в твою жизнь.</p>
-  </section>
+  <!-- Positioned cats -->
+  <svg class="cat-deco left-top floaty" aria-hidden="true"><use href="#cat-svg"></use></svg>
+  <svg class="cat-deco right-mid floaty" aria-hidden="true"><use href="#cat-svg"></use></svg>
+  <svg class="cat-deco left-mid small floaty" aria-hidden="true" style="opacity:0.95"><use href="#cat-svg"></use></svg>
+  <svg class="cat-deco right-bottom small floaty" aria-hidden="true"><use href="#cat-svg"></use></svg>
 
-  <section>
-    <h2>Почему выбирают меня</h2>
-    <ul>
-      <li>💬 Честные и понятные расклады без «воды»</li>
-      <li>🕯 Объясняю всё простыми словами</li>
-      <li>💜 Без запугиваний, мистики и “обрядов”</li>
-      <li>🌙 Каждый расклад индивидуален, с вниманием к твоей ситуации</li>
-    </ul>
-    <p>Я не обещаю чудес, но помогу увидеть реальную картину и понять, что делать, чтобы стало лучше уже сейчас.</p>
+  <main class="wrap">
+    <div class="grid">
+      <div>
+        <div id="about" class="card">
+          <h2 class="section">Обо мне</h2>
+          <p class="lead"><strong>Я работаю с Таро уже 4 года.</strong> За это время у меня сформировалась авторская методика, в которой соединяются психология, интуиция и энергия карт. Мне важно не просто назвать ответ — я помогаю понять, почему всё происходит и как это изменить. Каждый расклад — живой, глубокий и индивидуальный; я вижу не только события, но и внутренние причины.</p>
+        </div>
 
-    <p>Если чувствуешь, что запуталась и хочешь ясности — это знак ✨</p>
+        <div class="card">
+          <h2 class="section">Почему выбирают меня</h2>
+          <div class="why-list">
+            <div class="why-item">
+              <h4>Индивидуальный подход</h4>
+              <p>Каждый человек — отдельная история. Я не использую шаблонные трактовки, а читаю энергию именно твоей ситуации.</p>
+              <!-- cat sits on this block -->
+              <svg class="cat-small" aria-hidden="true"><use href="#cat-svg"></use></svg>
+            </div>
 
-    <a href="https://t.me/lubmk" target="_blank" class="button">Записаться на расклад</a>
-  </section>
+            <div class="why-item">
+              <h4>Авторская методика</h4>
+              <p>Я разработала собственный подход, где сочетаю психологию, интуицию и глубину Таро. Это помогает видеть не только внешние события, но и внутренние причины.</p>
+            </div>
+
+            <div class="why-item">
+              <h4>4 года практики</h4>
+              <p>За это время я провела сотни раскладов и видела, как карты помогают людям менять жизнь, принимать решения и возвращать уверенность.</p>
+            </div>
+
+            <div class="why-item">
+              <h4>Честность и глубина</h4>
+              <p>Я не приукрашиваю ответы. Если карта говорит о кризисе — мы разбираем, как пройти через него, а не убегаем от него.</p>
+            </div>
+
+            <div class="why-item">
+              <h4>Безопасное пространство</h4>
+              <p>Во время расклада ты можешь быть собой. Без страха осуждения, без ролей. Только ты и твоя правда.</p>
+            </div>
+
+            <div class="why-item">
+              <h4>Не просто гадание, а осознание</h4>
+              <p>Моя цель — не зависимость от карт, а твоя внутренняя ясность. Я помогаю понять, почему всё происходит и как это изменить.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="card">
+          <h2 class="section">Галерея — мои колоды</h2>
+          <div class="gallery">
+            <img src="c8482eb9-eddd-40be-a9f7-b4a08d7369ac.png" alt="Cat Tarot box">
+            <img src="ef78c0b2-6b17-47c4-8ad2-7caf38576d04.png" alt="Cat Tarot cards">
+            <img src="a023ec14-f0eb-4bad-8ba4-1760c1353df3.png" alt="Cat and cards">
+          </div>
+        </div> -->
+
+      </div>
+
+      <aside>
+        <div class="price-list">
+          <div class="price-card card">
+            <h4>VIP — 1 неделя</h4>
+            <div class="price-big">150 000</div>
+            <p>Безлимит вопросов — полные разборы, приём 11:30–00:00</p>
+            <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+          </div>
+
+          <div class="price-card card">
+            <h4>VIP — 1 месяц</h4>
+            <div class="price-big">500 000</div>
+            <p>Полный доступ, приоритет и глубокие разбора ситуаций.</p>
+            <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+          </div>
+
+          <div class="price-card card">
+            <h4>Мини-расклад</h4>
+            <div class="price-big">от 50 000</div>
+            <p>Краткий ответ или совет; быстро и по существу.</p>
+            <a class="btn secondary" href="https://t.me/tarolubmk" target="_blank" rel="noopener">Прайс в канале</a>
+          </div>
+
+          <div class="price-card card" style="text-align:left;">
+            <h4>Контакты</h4>
+            <p style="margin:8px 0;color:var(--muted)">Telegram личка: <strong>@lubmk</strong></p>
+            <p style="margin:8px 0;color:var(--muted)">Канал / прайс: <strong>@tarolubmk</strong></p>
+            <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Написать мне</a>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </main>
 
   <footer>
-    <p>© 2025 Лиза, таролог</p>
-    <div class="socials">
-      <a href="https://instagram.com/taro_lubmk" target="_blank">Instagram</a> •
-      <a href="https://t.me/tarolubmk" target="_blank">Telegram-канал</a> •
-      <a href="https://t.me/lubmk" target="_blank">Личные сообщения</a>
+    <div style="max-width:1100px;margin:0 auto;padding:12px">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:8px">
+        <img src="2ff33079-feca-45e0-8963-dc4793a74186.png" alt="Лиза" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.04)">
+        <div style="text-align:left">
+          <div style="font-weight:700">Лиза — Таролог</div>
+          <div style="font-size:13px;color:var(--muted)">Честные расклады для ясных решений</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">© 2025 Лиза. Все права защищены.</div>
+      <div style="font-size:13px;color:var(--muted)"><a href="https://t.me/tarolubmk" target="_blank">Telegram</a> • <a href="https://instagram.com/taro_lubmk" target="_blank">Instagram</a></div>
     </div>
   </footer>
+
+<script>
+/* Ambient sound via WebAudio API — gentle pad */
+(function(){
+  const btn = document.getElementById('playSoundBtn');
+  let audioCtx, masterGain, osc1, osc2, lfo, playing=false;
+
+  function startSound(){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.0;
+    masterGain.connect(audioCtx.destination);
+
+    // two detuned oscillators for pad
+    osc1 = audioCtx.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 220; // A3
+    osc2 = audioCtx.createOscillator(); osc2.type = 'sine'; osc2.frequency.value = 277.18; // C#4
+    // a subtle LFO for amplitude
+    lfo = audioCtx.createOscillator(); lfo.type='sine'; lfo.frequency.value = 0.12;
+    const lfoGain = audioCtx.createGain(); lfoGain.gain.value = 0.15;
+
+    const filter = audioCtx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value = 800;
+    const reverbGain = audioCtx.createGain(); reverbGain.gain.value = 0.25;
+
+    // connect
+    osc1.connect(filter); osc2.connect(filter);
+    filter.connect(masterGain);
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(masterGain.gain);
+
+    // gentle fade in
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 2.5);
+
+    // start oscillators
+    osc1.start(); osc2.start(); lfo.start();
+
+    // subtle detune drift
+    const now = audioCtx.currentTime;
+    osc1.detune.setValueAtTime(-10, now);
+    osc2.detune.setValueAtTime(8, now);
+
+    playing = true;
+    btn.textContent = '⏸︎ Pause Ambient';
+  }
+
+  function stopSound(){
+    if(!audioCtx) return;
+    // fade out
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 1.2);
+    setTimeout(()=>{ try{ osc1.stop(); osc2.stop(); lfo.stop(); } catch(e){} audioCtx.close(); audioCtx=null; playing=false; btn.textContent='▶︎ Play Ambient'; }, 1300);
+  }
+
+  btn.addEventListener('click', function(){
+    // first user interaction must start audio context
+    if(!playing){ startSound(); } else { stopSound(); }
+  });
+})();
+
+/* Small: gracefully handle missing images by hiding broken images */
+document.addEventListener('error', function(e){
+  const el = e.target;
+  if(el.tagName === 'IMG'){ el.style.display='none'; }
+}, true);
+</script>
+
 </body>
 </html>
