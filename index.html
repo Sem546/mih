@@ -78,8 +78,53 @@
 
   /* main content */
   main{padding:18px}
-  .card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 6px 24px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.03)}
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:26px;align-items:start}
+  /* ОБНОВЛЕННЫЙ ДИЗАЙН КАРТОЧЕК */
+  .card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Акцентная полоска сверху */
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+
+  /* Легкий градиентный оверлей */
+  .card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(184, 134, 255, 0.02), transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Чтобы текст был поверх псевдоэлементов */
+  .card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .grid{display:grid;grid-template-columns:1fr;gap:26px;align-items:start}
   h2.section{font-family:Cormorant, serif;font-size:24px;color:#f7eaff;margin:0 0 10px}
   p.lead{color:var(--muted);line-height:1.7;margin:0 0 8px}
 
@@ -96,12 +141,138 @@
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
   .gallery img{width:100%;height:140px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
 
-  /* price right column */
-  aside .price-list{display:flex;flex-direction:column;gap:12px}
-  .price-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);text-align:center}
-  .price-card h4{margin:0;color:#fff;font-family:Cormorant, serif}
-  .price-big{font-size:26px;color:var(--accent);margin-top:8px;font-weight:700}
-  .price-card p{color:var(--muted);font-size:14px;margin:8px 0 0}
+  /* СЕКЦИЯ С ПРАЙСАМИ ВНИЗУ */
+  .prices-section {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  .prices-section-title {
+    font-family: Cormorant, serif;
+    color: #fff;
+    font-size: 32px;
+    text-align: center;
+    margin: 0 0 30px 0;
+    text-shadow: 0 0 20px rgba(184,134,255,0.3);
+  }
+
+  .prices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  /* ЕДИНЫЙ СТИЛЬ ДЛЯ ВСЕХ ПРАЙСОВ */
+  .price-card{
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: fit-content;
+  }
+  .price-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.3;
+  }
+  .price-card:hover {
+    border-color: rgba(184,134,255,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+  .price-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .price-title {
+    font-family: Cormorant, serif;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+  }
+  .price-amount {
+    font-size: 24px;
+    color: var(--accent-2);
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(245, 207, 169, 0.3);
+    margin-left: 15px;
+    white-space: nowrap;
+  }
+  .price-description {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+  }
+  .price-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .price-features li {
+    margin-bottom: 6px;
+    padding-left: 16px;
+    position: relative;
+  }
+  .price-features li:before {
+    content: "✦";
+    color: var(--accent);
+    position: absolute;
+    left: 0;
+    font-size: 10px;
+    opacity: 0.8;
+  }
+  .price-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .price-actions .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  /* Контакты в отдельном стиле */
+  .contacts-card {
+    background: linear-gradient(135deg, rgba(184,134,255,0.05), rgba(245,207,169,0.03));
+    border: 1px solid rgba(184,134,255,0.1);
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Декоративные элементы */
+  .price-decoration {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    opacity: 0.03;
+    pointer-events: none;
+  }
+  .price-decoration.crystal {
+    top: -10px;
+    right: -10px;
+    background: radial-gradient(circle, var(--accent), transparent 70%);
+    border-radius: 50%;
+  }
 
   /* footer */
   footer{padding:28px;text-align:center;color:var(--muted);font-size:14px}
@@ -123,11 +294,45 @@
     .grid{grid-template-columns:1fr}
     .gallery{grid-template-columns:repeat(2,1fr)}
     .cat-deco{display:none}
+    .why-list{grid-template-columns:1fr}
+  }
+  @media (max-width:768px){
+    .prices-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .price-header {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .price-amount {
+      margin-left: 0;
+    }
   }
   @media (max-width:520px){
     .brand{font-size:28px}
     .hero{min-height:46vh;padding:28px 12px}
     .gallery img{height:110px}
+    .card {
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .price-card {
+      padding: 18px;
+    }
+    .prices-section-title {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .price-actions {
+      flex-direction: column;
+    }
+    .price-title {
+      font-size: 18px;
+    }
+    .price-amount {
+      font-size: 20px;
+    }
   }
 
   /* accessible focus */
@@ -243,50 +448,141 @@
           </div>
         </div>
 
-        <!-- <div class="card">
-          <h2 class="section">Галерея — мои колоды</h2>
-          <div class="gallery">
-            <img src="c8482eb9-eddd-40be-a9f7-b4a08d7369ac.png" alt="Cat Tarot box">
-            <img src="ef78c0b2-6b17-47c4-8ad2-7caf38576d04.png" alt="Cat Tarot cards">
-            <img src="a023ec14-f0eb-4bad-8ba4-1760c1353df3.png" alt="Cat and cards">
+        <!-- СЕКЦИЯ С ПРАЙСАМИ ВНИЗУ -->
+        <div class="prices-section">
+          <h2 class="prices-section-title">Услуги и цены</h2>
+          
+          <div class="prices-grid">
+            <!-- VIP 1 месяц -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">VIP — 1 месяц</div>
+                <div class="price-amount">500 000</div>
+              </div>
+              <p class="price-description">Полный доступ, приоритет и глубокие разбора ситуаций.</p>
+              <div class="price-actions">
+                <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
+
+            <!-- VIP 1 неделя -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">VIP — 1 неделя</div>
+                <div class="price-amount">150 000</div>
+              </div>
+              <p class="price-description">Безлимит вопросов — полные разборы, приём 11:30–00:00</p>
+              <div class="price-actions">
+                <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
+
+            <!-- Мини-расклад -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">Мини-расклад</div>
+                <div class="price-amount">от 50 000</div>
+              </div>
+              <p class="price-description">Краткий ответ или совет; быстро и по существу.</p>
+              <div class="price-actions">
+                <a class="btn secondary" href="https://t.me/tarolubmk" target="_blank" rel="noopener">Прайс в канале</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
+
+            <!-- Открытие своего дела -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">Открытие своего дела</div>
+                <div class="price-amount">95,000</div>
+              </div>
+              <ul class="price-features">
+                <li>Сможете ли вы открыть свое дело</li>
+                <li>Как вам лучше работать самому или в партнерстве</li>
+                <li>Нужно ли начинать дело в определённое время</li>
+                <li>Что принесёт данное дело</li>
+              </ul>
+              <div class="price-actions">
+                <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
+
+            <!-- Поиск работы -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">Поиск работы</div>
+                <div class="price-amount">80,000</div>
+              </div>
+              <ul class="price-features">
+                <li>Текущее положение дел</li>
+                <li>Потенциальные возможности</li>
+                <li>Качество необходимое для устройства работы</li>
+                <li>Перспективы устроиться на работу на ближайшее время</li>
+                <li>Что будет с финансами на новой работе</li>
+                <li>Что ожидать на новом месте</li>
+              </ul>
+              <div class="price-actions">
+                <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
+
+            <!-- Отношения -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">Отношения</div>
+                <div class="price-amount">75,000</div>
+              </div>
+              <ul class="price-features">
+                <li>Какие его чувства к ней</li>
+                <li>Какие чувства у неё к нему</li>
+                <li>Его намерение на неё</li>
+                <li>Её намерение на него</li>
+                <li>Что между ними сейчас</li>
+                <li>Как у них будут развиваться отношения в течение 2-3 месяцев</li>
+              </ul>
+              <div class="price-actions">
+                <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
+
+            <!-- Отношения (расширенный) -->
+            <div class="price-card">
+              <div class="price-header">
+                <div class="price-title">Отношения (расширенный)</div>
+                <div class="price-amount">30,000</div>
+              </div>
+              <ul class="price-features">
+                <li>Мысли</li>
+                <li>Чувства</li>
+                <li>Намерение</li>
+              </ul>
+              <div class="price-actions">
+                <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
+              </div>
+              <div class="price-decoration crystal"></div>
+            </div>
           </div>
-        </div> -->
+
+          <!-- Контакты -->
+          <div class="price-card contacts-card">
+            <div class="price-header">
+              <div class="price-title">Контакты</div>
+            </div>
+            <p class="price-description" style="margin-bottom: 12px;">Telegram личка: <strong>@lubmk</strong></p>
+            <p class="price-description" style="margin-bottom: 20px;">Канал / прайс: <strong>@tarolubmk</strong></p>
+            <div class="price-actions">
+              <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Написать мне</a>
+            </div>
+            <div class="price-decoration crystal"></div>
+          </div>
+        </div>
 
       </div>
-
-      <aside>
-        <div class="price-list">
-          <div class="price-card card">
-            <h4>VIP — 1 неделя</h4>
-            <div class="price-big">150 000</div>
-            <p>Безлимит вопросов — полные разборы, приём 11:30–00:00</p>
-            <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
-          </div>
-
-          <div class="price-card card">
-            <h4>VIP — 1 месяц</h4>
-            <div class="price-big">500 000</div>
-            <p>Полный доступ, приоритет и глубокие разбора ситуаций.</p>
-            <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Купить / Написать</a>
-          </div>
-
-          <div class="price-card card">
-            <h4>Мини-расклад</h4>
-            <div class="price-big">от 50 000</div>
-            <p>Краткий ответ или совет; быстро и по существу.</p>
-            <a class="btn secondary" href="https://t.me/tarolubmk" target="_blank" rel="noopener">Прайс в канале</a>
-          </div>
-
-          <div class="price-card card" style="text-align:left;">
-            <h4>Контакты</h4>
-            <p style="margin:8px 0;color:var(--muted)">Telegram личка: <strong>@lubmk</strong></p>
-            <p style="margin:8px 0;color:var(--muted)">Канал / прайс: <strong>@tarolubmk</strong></p>
-            <a class="btn" href="https://t.me/lubmk" target="_blank" rel="noopener">Написать мне</a>
-          </div>
-
-        </div>
-      </aside>
-
     </div>
   </main>
 
